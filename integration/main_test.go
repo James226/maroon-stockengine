@@ -14,6 +14,7 @@ import (
 	_ "github.com/microsoft/go-mssqldb"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -78,6 +79,11 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
+	err = VerifyHttp("http://localhost:10000/health")
+	if err != nil {
+		panic(err)
+	}
+
 	code := m.Run()
 
 	_ = StopContainer(ctx, cli, appContainer, true)
@@ -100,6 +106,25 @@ func VerifySqlConnection(ctx context.Context, db *sql.DB) error {
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
+	return err
+}
+
+func VerifyHttp(url string) error {
+	var err error
+
+	for i := 0; i < 60; i++ {
+		resp, err := http.Get(url)
+		if err == nil {
+			_ = resp.Body.Close()
+			return nil
+		}
+
+		if i%10 == 0 {
+			log.Printf("Failed to connect to url on attempt %d: %s", i, err.Error())
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+
 	return err
 }
 
