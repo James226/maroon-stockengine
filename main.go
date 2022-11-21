@@ -2,12 +2,15 @@ package main
 
 import (
 	"database/sql"
-	"github.com/gorilla/mux"
-	handlers2 "github.com/james226/maroon-stockengine/v2/handlers"
-	_ "github.com/microsoft/go-mssqldb"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+
+	"github.com/james226/stockengine/handlers"
+
+	_ "github.com/microsoft/go-mssqldb"
 )
 
 func main() {
@@ -18,9 +21,9 @@ func main() {
 		logger.Fatal("Error creating connection pool: ", err.Error())
 	}
 
-	handlers := handlers2.NewHealthHandler(logger, db)
+	handler := handlers.NewHealthHandler(logger, db)
 	myRouter := mux.NewRouter().StrictSlash(true)
-	myRouter.Handle("/health", handlers)
+	myRouter.Handle("/health", handler)
 	logger.Print("Starting HTTP server")
 
 	logger.Fatal(http.ListenAndServe(":10000", myRouter))

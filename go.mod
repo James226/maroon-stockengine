@@ -1,4 +1,4 @@
-module github.com/james226/maroon-stockengine/v2
+module github.com/james226/stockengine
 
 go 1.19
 
