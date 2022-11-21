@@ -9,9 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/james226/stockengine/integration/dockerclient"
-
 	"github.com/docker/docker/client"
+	"github.com/james226/dockerclient"
 
 	_ "github.com/microsoft/go-mssqldb"
 )
